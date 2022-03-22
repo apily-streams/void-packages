@@ -1,0 +1,36 @@
+# Template file for 'lua-language-server'
+pkgname=lua-language-server
+version=2.6.7
+revision=1
+archs="x86_64-musl"
+wrksrc="lua-language-server-${version}"
+#create_wrksrc=yes
+build_style=meta
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="git ninja"
+makedepends="ninja"
+#depends=""
+short_desc="Provides the :sumneko lua language server"
+maintainer="Gareth Barlow <Gruff@apily.co.uk>"
+license="MPL-1-1"
+homepage="https://github.com/sumneko/lua-language-server"
+
+do_fetch() {
+  git clone https://github.com/sumneko/lua-language-server --branch=$version $wrksrc
+  cd $wrksrc
+  git submodule update --init --recursive
+}
+
+do_build() {
+  cd 3rd/luamake
+  ./compile/install.sh
+  cd ../..
+  ./3rd/luamake/luamake rebuild
+}
+do_install() {
+  vbin bin/lua-language-server
+}
